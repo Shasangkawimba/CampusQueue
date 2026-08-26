@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../components/ThemeToggle';
 import Logo from '../../components/Logo';
@@ -6,6 +6,19 @@ import Logo from '../../components/Logo';
 export default function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      navigate('/admin/login');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    navigate('/admin/login');
+  };
 
   const [currentServing, setCurrentServing] = useState({
     ticketNumber: 'A-042',
@@ -91,9 +104,9 @@ export default function Dashboard() {
             <span className="text-xs font-medium text-black/60 dark:text-white/60">Appearance</span>
             <ThemeToggle />
           </div>
-          <button onClick={() => navigate('/')} className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 text-xs font-medium transition-colors">
+          <button onClick={handleLogout} className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 text-xs font-medium transition-colors">
             <span className="material-symbols-outlined text-[14px]">logout</span>
-            Exit to Public
+            Sign Out
           </button>
         </div>
       </aside>

@@ -21,11 +21,11 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 2 — CRUD Dasar (Tanpa Concurrency/Real-Time Dulu)
 
-- [ ] `loket.routes.js` + `loket.controller.js` — CRUD loket sederhana
-- [ ] `auth.routes.js` + `auth.controller.js` — login admin, generate JWT
-- [ ] `authMiddleware.js` — verifikasi JWT untuk route admin
-- [ ] Frontend: halaman `Login.jsx`, halaman admin dasar untuk kelola loket
-- [ ] **Checkpoint:** admin bisa login, CRUD loket berfungsi dari UI, route admin ter-protect (akses tanpa token ditolak)
+- [x] `loket.routes.js` + `loket.controller.js` — CRUD loket sederhana
+- [x] `auth.routes.js` + `auth.controller.js` — login admin, generate JWT
+- [x] `authMiddleware.js` — verifikasi JWT untuk route admin
+- [x] Frontend: halaman `Login.jsx`, halaman admin dasar untuk kelola loket
+- [x] **Checkpoint:** admin bisa login, CRUD loket berfungsi dari UI, route admin ter-protect (akses tanpa token ditolak)
 
 ## Phase 3 — Atomic Operations (Ambil Nomor & Call-Next) — PALING KRITIS
 

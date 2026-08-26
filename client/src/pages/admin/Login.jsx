@@ -2,15 +2,33 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../components/ThemeToggle';
 import Logo from '../../components/Logo';
+import api from '../../api/axios';
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('admin_a');
   const [password, setPassword] = useState('password123');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate('/admin/dashboard');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const response = await api.post('/auth/login', { username, password });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('adminToken', token);
+      localStorage.setItem('adminUser', JSON.stringify(user));
+      
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,6 +67,12 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs px-3 py-2 rounded-lg font-medium text-center">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="text-[10px] font-semibold text-black/60 dark:text-white/60 uppercase tracking-wider block mb-1.5 ml-1">
               Username
@@ -79,10 +103,11 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-3 px-4 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,102,204,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-3 px-4 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,102,204,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
           >
-            Sign In
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            {isLoading ? 'Signing In...' : 'Sign In'}
+            {!isLoading && <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
           </button>
         </form>
 
