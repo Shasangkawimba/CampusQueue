@@ -1,0 +1,97 @@
+{
+  "title": "Choose the visual world",
+  "question": "The roll assigned The Arcade Score Screen. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Arcade Score Screen",
+      "kicker": "THE ROLL",
+      "lineage": "8-bit arcade high score tables",
+      "thesis": "The queue as an intense, neon-lit digital scoreboard where your number is your name.",
+      "palette": ["#000000", "#39ff14", "#ff00ff", "#ffffff"],
+      "materials": ["glowing pixels", "pitch black void"],
+      "viewport": "A stark black screen with glowing neon typography, blinking cursors, and raw numbers.",
+      "risk": "Can feel too playful for a serious clinic environment.",
+      "raised": [
+        {
+          "from": "challenger-magazine",
+          "raise": "Unapologetic use of vivid, clashing accent colors to draw the eye to the active state."
+        }
+      ],
+      "comp": ".impeccable/mocks/decision/assigned.png"
+    },
+    {
+      "id": "model-pick",
+      "label": "The Deli Ticket Snail",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "mechanical ticket dispensers",
+      "thesis": "Visceral, nostalgic proof of a physical queue, modernized.",
+      "palette": ["#da291c", "#f3f4f6", "#111827"],
+      "materials": ["stamped plastic", "thermal paper", "bold grotesk"],
+      "viewport": "A bright red mechanical container aesthetic dispensing a stark, high-contrast thermal ticket.",
+      "risk": "Also the direction most runs in this category land on.",
+      "comp": ".impeccable/mocks/decision/model-pick.png"
+    },
+    {
+      "id": "challenger-seven-segment",
+      "label": "Seven-Segment Totem",
+      "verdict": "competitive",
+      "lineage": "gas-station price totems and scoreboards",
+      "thesis": "The queue as an undeniable, rigid mask of unlit and lit LED segments.",
+      "palette": ["#111111", "#ff2a2a", "#330000"],
+      "materials": ["LED segments", "ghost cells"],
+      "viewport": "Massive red segments against black, scaling as whole units, instant segment swaps.",
+      "case": "Fuses perfectly: queues are literally numbers; highly trusted utility form.",
+      "risk": "Can read too stark or aggressive if the ghost cells are too dim.",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-seven-segment-alarm-clock-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/signals-instruments-seven-segment-alarm-clock.webp",
+      "comp": ".impeccable/mocks/decision/challenger-seven-segment.png"
+    },
+    {
+      "id": "challenger-cassette",
+      "label": "Cassette Futurist Fascia",
+      "verdict": "competitive",
+      "lineage": "brushed aluminum tape decks",
+      "thesis": "The dashboard as physical switches and amber LED progress ladders.",
+      "palette": ["#d4d4d4", "#e5e5cb", "#ff8c00", "#1a1a1a"],
+      "materials": ["brushed aluminum", "chrome toggles", "plastic surround"],
+      "viewport": "Strict panel grid with engraved labels, chrome toggles snapping into state.",
+      "case": "Physical switches and progress ladders map well to taking a ticket and waiting.",
+      "risk": "Skeuomorphism can alienate users used to flat UI.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-cassette-futurism-deck-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/pop-culture-shelf-cassette-futurism-deck.webp",
+      "comp": ".impeccable/mocks/decision/challenger-cassette.png"
+    },
+    {
+      "id": "challenger-magazine",
+      "label": "Madrid Scene Cover",
+      "verdict": "declined",
+      "lineage": "movida scene magazine covers",
+      "palette": ["#ff00ff", "#ccff00", "#ffffff"],
+      "materials": ["cheap print", "fluorescent ink"],
+      "case": "Fuses poorly: queues need order, not scattered, misregistered noise.",
+      "kept": "Vivid accent colors for the active state.",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-movida-scene-magazine-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/posters-covers-sleeves-movida-scene-magazine.webp",
+      "comp": ".impeccable/mocks/decision/challenger-magazine.png"
+    }
+  ],
+  "reroll": {
+    "registers": ["safer", "bolder"]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "label": "The Apple-esque Utility",
+    "thesis": "What this category ships, executed impeccably.",
+    "palette": ["#ffffff", "#f8f9fa", "#007aff", "#1c1c1e"],
+    "materials": ["frosted glass", "subtle shadows", "San Francisco"],
+    "viewport": "The arrangement a visitor expects: bento boxes, subtle borders, high contrast.",
+    "risk": "Indistinguishable from the competition by design. Too 'AI-coded'.",
+    "comp": ".impeccable/mocks/decision/canon.png"
+  },
+  "steer": true
+}

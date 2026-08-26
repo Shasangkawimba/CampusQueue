@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-accent: #0066cc;
+  --color-accent-dark: #0a84ff;
+  
+  --color-bg-light: #f5f5f7;
+  --color-bg-dark: #000000;
+  
+  --color-text-light: #1d1d1f;
+  --color-text-dark: #f5f5f7;
+  
+  --color-text-muted-light: #86868b;
+  --color-text-muted-dark: #86868b;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  html {
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.dark body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+
+  ::selection {
+    background-color: rgba(0, 102, 204, 0.2);
+    color: inherit;
+  }
+
+  html.dark ::selection {
+    background-color: rgba(10, 132, 255, 0.3);
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+    border-radius: 1.5rem;
+  }
+
+  html.dark .glass-panel {
+    background-color: rgba(28, 28, 30, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .ticket-cutout-left {
+    mask-image: radial-gradient(circle at 0px center, transparent 12px, black 12.5px);
+    -webkit-mask-image: radial-gradient(circle at 0px center, transparent 12px, black 12.5px);
+  }
+
+  .ticket-cutout-right {
+    mask-image: radial-gradient(circle at 100% center, transparent 12px, black 12.5px);
+    -webkit-mask-image: radial-gradient(circle at 100% center, transparent 12px, black 12.5px);
+  }
+}
