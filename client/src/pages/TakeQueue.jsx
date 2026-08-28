@@ -64,8 +64,24 @@ const RECENT_CALLS = [
 export default function TakeQueue() {
   const navigate = useNavigate();
 
-  const handleTakeTicket = (id) => {
-    navigate(`/status/${id}`);
+  const handleTakeTicket = async (id) => {
+    try {
+      // Send a POST request to take a ticket for the loket ID
+      const response = await fetch(`http://localhost:3000/api/loket/${id}/take-ticket`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        // For Phase 3, we just navigate. 
+        // In reality, we'd want to pass the ticket data to the status page or save in local storage
+        navigate(`/status/${id}`);
+      } else {
+        const errorData = await response.json();
+        alert(`Error taking ticket: ${errorData.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to take ticket');
+    }
   };
 
   return (

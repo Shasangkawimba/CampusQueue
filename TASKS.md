@@ -29,10 +29,10 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 3 — Atomic Operations (Ambil Nomor & Call-Next) — PALING KRITIS
 
-- [ ] `queueService.js` — implementasi `takeNewTicket()` sesuai pola `ON CONFLICT DO UPDATE` di ARCHITECTURE.md
-- [ ] `queueService.js` — implementasi `callNextTicket()` sesuai pola `FOR UPDATE SKIP LOCKED` di ARCHITECTURE.md
-- [ ] `queue.routes.js` + `queue.controller.js` — endpoint `POST /loket/:id/take-ticket` dan `POST /loket/:id/call-next`
-- [ ] Frontend: halaman `TakeQueue.jsx` (ambil nomor), tombol "Panggil Berikutnya" di dashboard admin
+- [x] `queueService.js` — implementasi `takeNewTicket()` sesuai pola `ON CONFLICT DO UPDATE` di ARCHITECTURE.md
+- [x] `queueService.js` — implementasi `callNextTicket()` sesuai pola `FOR UPDATE SKIP LOCKED` di ARCHITECTURE.md
+- [x] `queue.routes.js` + `queue.controller.js` — endpoint `POST /loket/:id/take-ticket` dan `POST /loket/:id/call-next`
+- [x] Frontend: halaman `TakeQueue.jsx` (ambil nomor), tombol "Panggil Berikutnya" di dashboard admin
 - [ ] **Checkpoint (WAJIB diuji manual, bukan cuma baca kode):**
   1. Buka 2 tab browser berbeda, klik "Ambil Nomor Antrian" untuk loket yang sama di kedua tab secara nyaris bersamaan — pastikan hasilnya 2 nomor BERBEDA, bukan nomor yang sama.
   2. Buka 2 tab dashboard admin (atau simulasikan dengan 2 request cURL/Postman bersamaan) untuk loket yang sama, klik "Panggil Berikutnya" di kedua tab secara nyaris bersamaan — pastikan hasilnya 2 tiket BERBEDA yang berhasil dipanggil, bukan 1 tiket yang "dipanggil dobel" atau error.

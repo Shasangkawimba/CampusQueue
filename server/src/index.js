@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth.routes');
 const loketRoutes = require('./routes/loket.routes');
+const queueRoutes = require('./routes/queue.routes');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,6 +15,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/loket', loketRoutes);
+app.use('/api', queueRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../components/ThemeToggle';
 import Logo from '../../components/Logo';
+import api from '../../api/axios';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -65,18 +66,28 @@ export default function Dashboard() {
     },
   ]);
 
-  const handleCallNext = () => {
-    if (queueList.length > 0) {
-      const nextStudent = queueList[0];
+  const handleCallNext = async () => {
+    try {
+      const loketId = 1; // Assuming currently selected loket is 1
+      const response = await api.post(`/loket/${loketId}/call-next`);
+      const { data } = response.data;
+      
       setCurrentServing({
-        ticketNumber: nextStudent.ticketNumber,
-        studentName: nextStudent.name,
-        studentId: nextStudent.studentId,
-        serviceType: nextStudent.serviceType,
+        ticketNumber: `A-0${data.number}`, // Simple format for now
+        studentName: 'Student (Virtual)', // Since name is not in queue_tickets table yet
+        studentId: '---',
+        serviceType: 'Administrasi Akademik',
         note: 'Antrean virtual mahasiswa melalui sistem CampusQueue.',
-        duration: '00:01',
+        duration: '00:00',
       });
+      // Removing from list logic to be handled properly with socket.io in phase 4.
+      // For now just simulate UI update.
       setQueueList((prev) => prev.slice(1));
+    } catch (error) {
+      console.error('Failed to call next ticket', error);
+      if (error.response?.status === 404) {
+        alert('No tickets waiting in queue');
+      }
     }
   };
 
