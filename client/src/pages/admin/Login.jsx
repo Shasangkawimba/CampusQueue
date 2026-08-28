@@ -32,11 +32,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] text-black dark:text-white font-sans flex flex-col items-center justify-center p-6 relative">
+    <div className="min-h-screen bg-white dark:bg-[#000000] text-black dark:text-white font-sans flex flex-col items-center justify-center p-6 relative selection:bg-black/10 dark:selection:bg-white/20">
+      
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 bg-grid-small opacity-20 pointer-events-none z-0"></div>
+      
+      {/* Top Nav */}
       <header className="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 z-50">
-        <div className="flex items-center gap-2 cursor-pointer select-none" onClick={() => navigate('/')}>
-          <Logo />
-          <span className="font-semibold text-sm tracking-tight text-black/80 dark:text-white/80">
+        <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => navigate('/')}>
+          <Logo className="w-5 h-5" iconClassName="w-3 h-3" />
+          <span className="font-bold text-sm tracking-tight text-black dark:text-white">
             CampusQueue
           </span>
         </div>
@@ -44,42 +49,46 @@ export default function Login() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/')}
-            className="text-xs font-medium text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1"
+            className="text-[11px] font-bold uppercase tracking-wider text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1"
           >
             <span className="material-symbols-outlined text-[14px]">arrow_back</span>
             Back to Public
           </button>
-          <ThemeToggle />
+          <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-md p-0.5">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
-      <div className="w-full max-w-sm glass-panel p-8 relative z-10">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-black/5 dark:bg-white/10 text-black/60 dark:text-white/60 mx-auto flex items-center justify-center mb-4">
-            <span className="material-symbols-outlined text-2xl">admin_panel_settings</span>
+      {/* Login Card */}
+      <div className="w-full max-w-sm bg-white dark:bg-[#0a0a0a] border border-black/10 dark:border-white/10 rounded-2xl p-8 relative z-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+        
+        <div className="text-left mb-8">
+          <div className="w-10 h-10 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-black dark:text-white flex items-center justify-center mb-5">
+            <span className="material-symbols-outlined text-[20px]">admin_panel_settings</span>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-black dark:text-white mb-1">
+          <h1 className="text-xl font-bold tracking-tight text-black dark:text-white mb-1">
             Admin Console
           </h1>
-          <p className="text-xs text-black/50 dark:text-white/50">
+          <p className="text-xs text-black/50 dark:text-white/50 font-medium">
             Sign in to manage queues and counters
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="flex flex-col gap-5">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs px-3 py-2 rounded-lg font-medium text-center">
+            <div className="bg-red-50 dark:bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs px-3 py-2.5 rounded-lg font-bold text-center">
               {error}
             </div>
           )}
 
-          <div>
-            <label className="text-[10px] font-semibold text-black/60 dark:text-white/60 uppercase tracking-wider block mb-1.5 ml-1">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold text-black/60 dark:text-white/60 uppercase tracking-widest">
               Username
             </label>
             <input
               type="text"
-              className="w-full bg-white/50 dark:bg-black/50 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-black dark:text-white placeholder-black/30 dark:placeholder-white/30 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-black transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]"
+              className="w-full bg-[#fcfcfc] dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm font-medium text-black dark:text-white placeholder-black/30 dark:placeholder-white/30 focus:outline-none focus:border-black/30 dark:focus:border-white/30 transition-colors"
               placeholder="admin_a"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -87,13 +96,13 @@ export default function Login() {
             />
           </div>
 
-          <div>
-            <label className="text-[10px] font-semibold text-black/60 dark:text-white/60 uppercase tracking-wider block mb-1.5 ml-1">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold text-black/60 dark:text-white/60 uppercase tracking-widest">
               Password
             </label>
             <input
               type="password"
-              className="w-full bg-white/50 dark:bg-black/50 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-black dark:text-white placeholder-black/30 dark:placeholder-white/30 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-black transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]"
+              className="w-full bg-[#fcfcfc] dark:bg-[#111111] border border-black/10 dark:border-white/10 rounded-lg px-3 py-2.5 text-sm font-medium text-black dark:text-white placeholder-black/30 dark:placeholder-white/30 focus:outline-none focus:border-black/30 dark:focus:border-white/30 transition-colors"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -104,17 +113,20 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-3 px-4 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,102,204,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
+            className="w-full mt-2 bg-black dark:bg-white text-white dark:text-black font-bold text-[13px] py-3 px-4 rounded-lg hover:opacity-90 transition-opacity active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
-            {!isLoading && <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
+            {!isLoading && <span className="material-symbols-outlined text-[16px]">login</span>}
           </button>
         </form>
 
-        <div className="mt-8 pt-4 border-t border-black/5 dark:border-white/10 text-center">
-          <p className="text-[10px] text-black/40 dark:text-white/40">
-            Demo credentials: <strong className="font-mono text-black/60 dark:text-white/60 font-medium">admin_a</strong> / <strong className="font-mono text-black/60 dark:text-white/60 font-medium">password123</strong>
-          </p>
+        <div className="mt-8 pt-6 border-t border-black/10 dark:border-white/10 flex flex-col gap-1 text-center">
+          <p className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider mb-2">Demo Credentials</p>
+          <div className="flex items-center justify-center gap-3">
+            <span className="font-mono text-xs font-semibold text-black/70 dark:text-white/70 bg-black/5 dark:bg-white/5 px-2 py-1 rounded">admin_a</span>
+            <span className="text-black/30 dark:text-white/30">/</span>
+            <span className="font-mono text-xs font-semibold text-black/70 dark:text-white/70 bg-black/5 dark:bg-white/5 px-2 py-1 rounded">password123</span>
+          </div>
         </div>
       </div>
     </div>

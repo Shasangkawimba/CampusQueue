@@ -6,6 +6,7 @@ import Logo from '../../components/Logo';
 export default function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -36,7 +37,7 @@ export default function Dashboard() {
       name: 'Sarah Jenkins',
       studentId: '99281',
       serviceType: 'Konseling Beasiswa KIP-K',
-      waitTime: '14 min',
+      waitTime: '14m',
     },
     {
       id: 2,
@@ -44,7 +45,7 @@ export default function Dashboard() {
       name: 'David Okafor',
       studentId: '44102',
       serviceType: 'Legalisir Ijazah & Transkrip',
-      waitTime: '8 min',
+      waitTime: '8m',
     },
     {
       id: 3,
@@ -52,7 +53,15 @@ export default function Dashboard() {
       name: 'Elena Rostova',
       studentId: '11093',
       serviceType: 'Surat Keterangan Mahasiswa Aktif',
-      waitTime: '3 min',
+      waitTime: '3m',
+    },
+    {
+      id: 4,
+      ticketNumber: 'A-046',
+      name: 'Budi Santoso',
+      studentId: '22104',
+      serviceType: 'Pengambilan KTM Baru',
+      waitTime: '1m',
     },
   ]);
 
@@ -77,154 +86,241 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] dark:bg-black text-black dark:text-white font-sans flex flex-col md:flex-row h-screen overflow-hidden">
-      {/* Sidebar (macOS System Settings style) */}
-      <aside className="w-full md:w-64 bg-white/50 dark:bg-white/5 border-r border-black/5 dark:border-white/10 flex flex-col flex-shrink-0 backdrop-blur-3xl">
-        <div className="h-14 px-4 flex items-center gap-2 border-b border-black/5 dark:border-white/10">
-          <Logo className="w-5 h-5" iconClassName="w-3 h-3" />
-          <span className="font-semibold text-sm tracking-tight text-black/80 dark:text-white/80">
+    <div className="min-h-screen bg-white dark:bg-[#000000] text-black dark:text-white font-sans flex h-screen overflow-hidden selection:bg-black/10 dark:selection:bg-white/20">
+      
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 dark:bg-black/80 z-40 md:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Stark Solid Sidebar / Mobile Drawer */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-[240px] bg-[#fcfcfc] dark:bg-[#0a0a0a] border-r border-black/10 dark:border-white/10 flex flex-col transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
+        <div className="h-12 px-4 flex items-center gap-3 border-b border-black/10 dark:border-white/10 relative">
+          <Logo className="w-4 h-4" iconClassName="w-2.5 h-2.5" />
+          <span className="font-semibold text-sm tracking-tight text-black dark:text-white">
             Admin Console
           </span>
+          {/* Close button for mobile */}
+          <button 
+            className="md:hidden absolute right-3 p-1 rounded-md text-black/50 dark:text-white/50 hover:bg-black/5 dark:hover:bg-white/5"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
         </div>
         
         <div className="p-3 flex-1 overflow-y-auto">
-          <div className="text-[10px] font-semibold text-black/40 dark:text-white/40 uppercase tracking-wider px-2 mb-2">Counters</div>
-          <button className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[14px]">desktop_windows</span>
-            Counter 01
-          </button>
-          <button className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[14px]">desktop_windows</span>
-            Counter 02
-          </button>
+          <div className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-[0.1em] px-2 mb-2">Service Counters</div>
+          
+          <div className="flex flex-col gap-0.5">
+            {/* Active Counter */}
+            <button className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-black dark:bg-white text-white dark:text-black text-xs font-semibold">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[14px]">desktop_windows</span>
+                Counter 01
+              </div>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+            </button>
+            
+            {/* Inactive Counter */}
+            <button className="w-full flex items-center justify-between px-3 py-2 rounded-md text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white text-xs font-medium transition-colors">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[14px]">desktop_windows</span>
+                Counter 02
+              </div>
+            </button>
+          </div>
         </div>
 
-        <div className="p-3 border-t border-black/5 dark:border-white/10 flex flex-col gap-1">
-          <div className="flex items-center justify-between px-2 py-1.5 rounded-lg">
-            <span className="text-xs font-medium text-black/60 dark:text-white/60">Appearance</span>
+        <div className="p-3 border-t border-black/10 dark:border-white/10 flex flex-col gap-1">
+          <div className="flex items-center justify-between px-3 py-2 rounded-md bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10">
+            <span className="text-[11px] font-medium text-black/80 dark:text-white/80">Appearance</span>
             <ThemeToggle />
           </div>
-          <button onClick={handleLogout} className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[14px]">logout</span>
+          <button onClick={handleLogout} className="w-full flex items-center justify-between px-3 py-2 rounded-md text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 text-[11px] font-semibold transition-colors">
             Sign Out
+            <span className="material-symbols-outlined text-[14px]">logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-[#0a0a0a]">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-[#111111] relative z-10 w-full min-w-0">
+        
         {/* Header */}
-        <header className="h-14 px-6 flex items-center justify-between border-b border-black/5 dark:border-white/10 shrink-0">
-          <div className="flex items-center gap-3">
-            <h1 className="text-sm font-semibold text-black/90 dark:text-white/90">Counter 01: Administrasi Akademik</h1>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              Online
-            </span>
+        <header className="h-12 px-4 md:px-6 flex items-center justify-between border-b border-black/10 dark:border-white/10 bg-[#fcfcfc] dark:bg-[#0a0a0a] shrink-0 sticky top-0 z-30">
+          <div className="flex items-center gap-2 md:gap-4 min-w-0">
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-1.5 -ml-1.5 rounded-md hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white flex-shrink-0"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <span className="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+            <h1 className="text-sm font-bold tracking-tight text-black dark:text-white truncate">Administrasi Akademik</h1>
+            <div className="hidden sm:flex items-center gap-1.5 bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/20 flex-shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Online</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-black/50 dark:text-white/50">
-            <span className="material-symbols-outlined text-[14px]">person</span>
-            Drs. Ahmad Fauzi
+          <div className="flex items-center gap-2 text-[11px] font-medium text-black/60 dark:text-white/60 flex-shrink-0 ml-2">
+            <span className="material-symbols-outlined text-[14px] hidden sm:block">person</span>
+            <span className="truncate max-w-[100px] sm:max-w-none">Drs. Ahmad Fauzi</span>
           </div>
         </header>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full min-h-[500px]">
-            {/* Left Panel: Active Serving (1 col) */}
-            <div className="xl:col-span-1 flex flex-col gap-4">
-              <div className="border border-black/10 dark:border-white/10 rounded-xl overflow-hidden flex flex-col h-full">
-                <div className="px-4 py-3 border-b border-black/5 dark:border-white/10 bg-black/2 dark:bg-white/2 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-black/60 dark:text-white/60">Now Serving</span>
-                  <span className="font-mono text-xs text-blue-600 dark:text-blue-500">{currentServing.duration}</span>
-                </div>
-                
-                <div className="p-5 flex-1 flex flex-col justify-center items-center text-center">
-                  <div className="font-mono text-5xl font-semibold tracking-tight text-blue-600 dark:text-blue-500 mb-4">
-                    {currentServing.ticketNumber}
-                  </div>
-                  <h2 className="text-sm font-semibold text-black dark:text-white mb-1">{currentServing.studentName}</h2>
-                  <p className="text-xs text-black/50 dark:text-white/50 font-mono mb-4">{currentServing.studentId}</p>
-                  
-                  <div className="w-full text-left p-3 rounded-lg bg-[#f5f5f7] dark:bg-white/5 border border-black/5 dark:border-white/5">
-                    <div className="text-[10px] font-semibold text-black/40 dark:text-white/40 uppercase mb-1">Service Required</div>
-                    <div className="text-xs font-medium text-black/80 dark:text-white/80 mb-2">{currentServing.serviceType}</div>
-                    <div className="text-[10px] font-semibold text-black/40 dark:text-white/40 uppercase mb-1">Notes</div>
-                    <div className="text-xs text-black/60 dark:text-white/60 italic leading-relaxed">"{currentServing.note}"</div>
-                  </div>
-                </div>
-
-                <div className="p-4 border-t border-black/5 dark:border-white/10 flex flex-col gap-2">
-                  <button onClick={handleComplete} className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors">
-                    Mark as Complete
-                  </button>
-                  <button onClick={handleSkip} className="w-full py-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-black/70 dark:text-white/70 text-xs font-medium transition-colors">
-                    Skip / No Show
-                  </button>
-                </div>
+        {/* Dense Content Scroll */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="max-w-7xl mx-auto flex flex-col gap-6">
+            
+            {/* Top Metrics Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              <div className="p-3 md:p-4 border border-black/10 dark:border-white/10 rounded-xl bg-[#fcfcfc] dark:bg-[#0a0a0a] flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider">Waiting</span>
+                <span className="text-xl md:text-2xl font-bold font-mono tracking-tighter">{queueList.length}</span>
+              </div>
+              <div className="p-3 md:p-4 border border-black/10 dark:border-white/10 rounded-xl bg-[#fcfcfc] dark:bg-[#0a0a0a] flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider">Avg Wait Time</span>
+                <span className="text-xl md:text-2xl font-bold font-mono tracking-tighter">06:30</span>
+              </div>
+              <div className="p-3 md:p-4 border border-black/10 dark:border-white/10 rounded-xl bg-[#fcfcfc] dark:bg-[#0a0a0a] flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider">Total Served</span>
+                <span className="text-xl md:text-2xl font-bold font-mono tracking-tighter">42</span>
+              </div>
+              <div className="p-3 md:p-4 border border-black/10 dark:border-white/10 rounded-xl bg-[#fcfcfc] dark:bg-[#0a0a0a] flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-black/40 dark:text-white/40 uppercase tracking-wider">Session Time</span>
+                <span className="text-xl md:text-2xl font-bold font-mono tracking-tighter">02:14:00</span>
               </div>
             </div>
-
-            {/* Right Panel: Queue Table (2 cols) */}
-            <div className="xl:col-span-2 flex flex-col">
-              <div className="border border-black/10 dark:border-white/10 rounded-xl overflow-hidden flex flex-col h-full">
-                <div className="px-4 py-3 border-b border-black/5 dark:border-white/10 bg-black/2 dark:bg-white/2 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-black/60 dark:text-white/60">Waiting Queue</span>
-                    <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[10px] font-medium text-black/60 dark:text-white/60">
-                      {queueList.length}
+            
+            {/* Split View */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              
+              {/* Left Column: Dense Active Serving (4 cols) */}
+              <div className="lg:col-span-4 flex flex-col gap-4">
+                <div className="border border-black/10 dark:border-white/10 rounded-xl overflow-hidden bg-[#fcfcfc] dark:bg-[#0a0a0a]">
+                  <div className="px-4 py-3 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/5 dark:bg-white/5">
+                    <span className="text-[11px] font-bold text-black/60 dark:text-white/60 uppercase tracking-wider flex items-center gap-2">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                      </span>
+                      Active Ticket
+                    </span>
+                    <span className="font-mono text-xs font-semibold bg-white dark:bg-black px-1.5 py-0.5 rounded border border-black/10 dark:border-white/10">
+                      {currentServing.duration}
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Search queue..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-48 px-2 py-1 text-[11px] rounded bg-white dark:bg-black border border-black/10 dark:border-white/10 focus:outline-none focus:border-blue-500"
-                    />
-                    <button onClick={handleCallNext} className="px-3 py-1 rounded bg-black dark:bg-white text-white dark:text-black text-[11px] font-medium hover:opacity-90 transition-opacity flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[12px]">navigate_next</span>
-                      Call Next
+                  
+                  <div className="p-5 flex flex-col gap-4 relative">
+                    <div className="absolute inset-0 bg-grid-small opacity-10 pointer-events-none z-0"></div>
+                    <div className="relative z-10 flex flex-col gap-1">
+                      <div className="font-mono text-5xl font-semibold tracking-tighter text-black dark:text-white mb-2">
+                        {currentServing.ticketNumber}
+                      </div>
+                      <div className="text-sm font-bold text-black dark:text-white">{currentServing.studentName}</div>
+                      <div className="text-[11px] font-mono font-medium text-black/60 dark:text-white/60">{currentServing.studentId}</div>
+                    </div>
+                    
+                    <div className="relative z-10 w-full flex flex-col gap-3 p-3 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10">
+                      <div>
+                        <div className="text-[9px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest mb-0.5">Service</div>
+                        <div className="text-xs font-semibold text-black dark:text-white leading-tight">{currentServing.serviceType}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] font-bold text-black/40 dark:text-white/40 uppercase tracking-widest mb-0.5">Notes</div>
+                        <div className="text-[11px] text-black/70 dark:text-white/70 leading-relaxed border-l border-black/20 dark:border-white/20 pl-2">"{currentServing.note}"</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 border-t border-black/10 dark:border-white/10 flex items-center gap-2 bg-black/5 dark:bg-white/5">
+                    <button onClick={handleSkip} className="flex-1 py-2 rounded-lg bg-white dark:bg-[#111] border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 text-black dark:text-white text-[11px] font-bold transition-colors">
+                      Skip
+                    </button>
+                    <button onClick={handleComplete} className="flex-1 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black border border-transparent hover:opacity-90 text-[11px] font-bold transition-colors">
+                      Complete
                     </button>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex-1 overflow-auto bg-white dark:bg-black">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead className="sticky top-0 bg-white/90 dark:bg-black/90 backdrop-blur border-b border-black/5 dark:border-white/10 z-10">
-                      <tr>
-                        <th className="px-4 py-2 font-medium text-black/50 dark:text-white/50 w-20">Ticket</th>
-                        <th className="px-4 py-2 font-medium text-black/50 dark:text-white/50">Student</th>
-                        <th className="px-4 py-2 font-medium text-black/50 dark:text-white/50">Service</th>
-                        <th className="px-4 py-2 font-medium text-black/50 dark:text-white/50 w-24">Wait Time</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-black/5 dark:divide-white/10">
-                      {queueList.length === 0 ? (
+              {/* Right Column: Dense Queue Table (8 cols) */}
+              <div className="lg:col-span-8 flex flex-col h-[400px] lg:h-[500px]">
+                <div className="border border-black/10 dark:border-white/10 rounded-xl flex flex-col h-full bg-[#fcfcfc] dark:bg-[#0a0a0a] overflow-hidden">
+                  <div className="px-3 md:px-4 py-3 border-b border-black/10 dark:border-white/10 flex flex-wrap gap-2 items-center justify-between bg-black/5 dark:bg-white/5">
+                    <h3 className="text-xs font-bold text-black/80 dark:text-white/80 uppercase tracking-wider hidden sm:block">Waiting Queue</h3>
+                    
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <div className="relative flex-1 sm:flex-none">
+                        <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[14px] text-black/40 dark:text-white/40">search</span>
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full sm:w-40 pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-md bg-white dark:bg-black border border-black/10 dark:border-white/10 focus:outline-none focus:border-black/30 dark:focus:border-white/30 transition-colors"
+                        />
+                      </div>
+                      <button onClick={handleCallNext} className="h-7 px-3 rounded-md bg-black dark:bg-white text-white dark:text-black text-[11px] font-bold hover:opacity-90 transition-opacity flex items-center gap-1 flex-shrink-0">
+                        Call Next
+                        <span className="material-symbols-outlined text-[14px]">play_arrow</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-auto bg-white dark:bg-[#111111]">
+                    <table className="w-full text-left text-[11px] border-collapse">
+                      <thead className="sticky top-0 bg-[#fcfcfc] dark:bg-[#0a0a0a] border-b border-black/10 dark:border-white/10 z-10">
                         <tr>
-                          <td colSpan={4} className="px-4 py-8 text-center text-black/40 dark:text-white/40">No one is waiting in the queue.</td>
+                          <th className="px-3 md:px-4 py-2 font-bold text-black/40 dark:text-white/40 uppercase tracking-wider w-20 md:w-24">Ticket</th>
+                          <th className="px-3 md:px-4 py-2 font-bold text-black/40 dark:text-white/40 uppercase tracking-wider">Student</th>
+                          <th className="px-4 py-2 font-bold text-black/40 dark:text-white/40 uppercase tracking-wider hidden sm:table-cell">Service</th>
+                          <th className="px-3 md:px-4 py-2 font-bold text-black/40 dark:text-white/40 uppercase tracking-wider text-right w-16 md:w-20">Wait</th>
                         </tr>
-                      ) : (
-                        queueList
-                          .filter((q) => q.name.toLowerCase().includes(searchQuery.toLowerCase()) || q.studentId.includes(searchQuery))
-                          .map((item) => (
-                            <tr key={item.id} className="hover:bg-black/2 dark:hover:bg-white/2 transition-colors group">
-                              <td className="px-4 py-3 font-mono font-medium text-black dark:text-white">{item.ticketNumber}</td>
-                              <td className="px-4 py-3">
-                                <div className="font-medium text-black/90 dark:text-white/90">{item.name}</div>
-                                <div className="text-[10px] text-black/40 dark:text-white/40 font-mono mt-0.5">{item.studentId}</div>
-                              </td>
-                              <td className="px-4 py-3 text-black/70 dark:text-white/70 truncate">{item.serviceType}</td>
-                              <td className="px-4 py-3 text-black/60 dark:text-white/60">{item.waitTime}</td>
-                            </tr>
-                          ))
-                      )}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-black/5 dark:divide-white/5">
+                        {queueList.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-12 text-center">
+                              <div className="text-[11px] font-medium text-black/40 dark:text-white/40">Queue is empty</div>
+                            </td>
+                          </tr>
+                        ) : (
+                          queueList
+                            .filter((q) => q.name.toLowerCase().includes(searchQuery.toLowerCase()) || q.studentId.includes(searchQuery))
+                            .map((item, index) => (
+                              <tr 
+                                key={item.id} 
+                                className={`transition-colors hover:bg-black/5 dark:hover:bg-white/5 ${index === 0 ? 'bg-black/[0.02] dark:bg-white/[0.02]' : ''}`}
+                              >
+                                <td className="px-3 md:px-4 py-3 font-mono font-bold text-black dark:text-white">
+                                  <div className="flex items-center gap-1.5 md:gap-2">
+                                    {index === 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0"></span>}
+                                    <span className="truncate">{item.ticketNumber}</span>
+                                  </div>
+                                </td>
+                                <td className="px-3 md:px-4 py-3">
+                                  <div className="font-semibold text-black/90 dark:text-white/90 truncate">{item.name}</div>
+                                  <div className="text-[10px] font-mono text-black/50 dark:text-white/50">{item.studentId}</div>
+                                </td>
+                                <td className="px-4 py-3 text-black/70 dark:text-white/70 hidden sm:table-cell max-w-[150px] md:max-w-[200px] truncate">{item.serviceType}</td>
+                                <td className={`px-3 md:px-4 py-3 text-right font-mono font-bold ${index === 0 ? 'text-red-600 dark:text-red-400' : 'text-black/60 dark:text-white/60'}`}>
+                                  {item.waitTime}
+                                </td>
+                              </tr>
+                            ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </main>

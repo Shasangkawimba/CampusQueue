@@ -2,6 +2,7 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER || 'postgres',
@@ -22,7 +23,11 @@ async function runMigrations() {
     console.log('Running seed.sql...');
     const seedSql = fs.readFileSync(path.join(__dirname, 'migrations', 'seed.sql'), 'utf-8');
     await client.query(seedSql);
-    console.log('Seeding complete.');
+
+    console.log('Updating admin password hashes with bcrypt...');
+    const hash = await bcrypt.hash('password123', 10);
+    await client.query('UPDATE admins SET password_hash = $1', [hash]);
+    console.log('Seeding and password hashing complete.');
   } catch (err) {
     console.error('Migration failed:', err);
   } finally {
@@ -32,3 +37,4 @@ async function runMigrations() {
 }
 
 runMigrations();
+
