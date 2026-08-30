@@ -87,6 +87,8 @@ export default function Dashboard() {
       console.error('Failed to call next ticket', error);
       if (error.response?.status === 404) {
         alert('No tickets waiting in queue');
+      } else if (error.response?.status === 400) {
+        alert(error.response.data.error || 'Please complete or skip the current active ticket before calling the next one.');
       }
     }
   };
@@ -475,15 +477,17 @@ export default function Dashboard() {
               </h2>
               <button 
                 onClick={handleCallNext} 
-                className="text-sm font-bold text-accent dark:text-accent-dark hover:opacity-80 transition-opacity"
+                disabled={!!currentServing}
+                className="text-sm font-bold text-accent dark:text-accent-dark hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                title={currentServing ? "Please complete or skip the current ticket first" : ""}
               >
                 Call Next
               </button>
             </div>
 
-            <div className="glass-panel rounded-xl flex flex-col border border-text-light/15 dark:border-text-dark/15 overflow-hidden">
+            <div className="glass-panel rounded-xl flex flex-col border border-text-light/15 dark:border-text-dark/15 overflow-hidden h-[337px]">
               
-              <div className="p-3 border-b border-text-light/10 dark:border-text-dark/10">
+              <div className="p-3 border-b border-text-light/10 dark:border-text-dark/10 shrink-0">
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-text-muted-light dark:text-text-muted-dark">search</span>
                   <input
@@ -496,9 +500,9 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <table className="w-full text-left text-sm relative">
+                  <thead className="sticky top-0 bg-bg-light/95 dark:bg-bg-dark/95 backdrop-blur-md z-10">
                     <tr className="border-b border-text-light/5 dark:border-text-dark/5 text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted-dark">
                       <th className="px-5 py-4 font-bold w-32">Ticket No</th>
                       <th className="px-5 py-4 font-bold">Time Joined</th>

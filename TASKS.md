@@ -7,17 +7,17 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 0 — Setup Project
 
-- [ ] Init folder `server/` (Express + Node) dan `client/` (React via Vite) sebagai 2 project terpisah dalam 1 repo
-- [ ] Setup `docker-compose.yml`: PostgreSQL saja (server & client dijalankan langsung via `npm run dev` saat development, tidak perlu di-Docker-kan dulu untuk kemudahan iterasi)
-- [ ] Install dependencies server: `express`, `pg`, `socket.io`, `jsonwebtoken`, `bcrypt`, `dotenv`
-- [ ] Install dependencies client: `react-router-dom`, `socket.io-client`, `axios`
-- [ ] **Checkpoint:** `docker compose up` menjalankan PostgreSQL, server Express bisa connect ke database tanpa error
+- [x] Init folder `server/` (Express + Node) dan `client/` (React via Vite) sebagai 2 project terpisah dalam 1 repo
+- [x] Setup `docker-compose.yml`: PostgreSQL saja (server & client dijalankan langsung via `npm run dev` saat development, tidak perlu di-Docker-kan dulu untuk kemudahan iterasi)
+- [x] Install dependencies server: `express`, `pg`, `socket.io`, `jsonwebtoken`, `bcrypt`, `dotenv`
+- [x] Install dependencies client: `react-router-dom`, `socket.io-client`, `axios`
+- [x] **Checkpoint:** `docker compose up` menjalankan PostgreSQL, server Express bisa connect ke database tanpa error
 
 ## Phase 1 — Database Schema
 
-- [ ] Migration SQL: `loket`, `daily_counters`, `queue_tickets`, `admins` sesuai PRD.md section 8
-- [ ] Seeder: 2-3 loket contoh, 1 admin contoh (password di-hash pakai bcrypt)
-- [ ] **Checkpoint:** jalankan migration & seeder, cek data masuk lewat `psql` langsung
+- [x] Migration SQL: `loket`, `daily_counters`, `queue_tickets`, `admins` sesuai PRD.md section 8
+- [x] Seeder: 2-3 loket contoh, 1 admin contoh (password di-hash pakai bcrypt)
+- [x] **Checkpoint:** jalankan migration & seeder, cek data masuk lewat `psql` langsung
 
 ## Phase 2 — CRUD Dasar (Tanpa Concurrency/Real-Time Dulu)
 
@@ -54,15 +54,16 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 6 — Fitur "Selesai" & "Skip"
 
-- [ ] Endpoint & UI untuk tandai tiket `done` dan `skipped`
-- [ ] Pastikan broadcast juga berjalan untuk 2 aksi ini (sesuai Hard Rules)
-- [ ] **Checkpoint:** alur lengkap dari ambil nomor → dipanggil → selesai/skip berjalan mulus dan ter-update real-time di semua sisi
+- [x] Endpoint & UI untuk tandai tiket `done` dan `skipped`
+- [x] Pastikan broadcast juga berjalan untuk 2 aksi ini (sesuai Hard Rules)
+- [x] **Checkpoint:** alur lengkap dari ambil nomor → dipanggil → selesai/skip berjalan mulus dan ter-update real-time di semua sisi
+
 
 ## Phase 7 — Polish & Testing Menyeluruh
 
-- [ ] Test skenario: loket dengan antrian kosong (klik "Panggil Berikutnya" saat tidak ada yang menunggu) — pastikan tidak error, tampilkan pesan yang jelas
-- [ ] Test multi-loket: pastikan update di Loket A tidak muncul di layar mahasiswa yang menunggu di Loket B
-- [ ] Review keseluruhan concurrency handling — coba stress test sederhana (buka banyak tab sekaligus, ambil nomor bersamaan)
+- [x] Test skenario: loket dengan antrian kosong (klik "Panggil Berikutnya" saat tidak ada yang menunggu) — pastikan tidak error, tampilkan pesan yang jelas
+- [x] Test multi-loket: pastikan update di Loket A tidak muncul di layar mahasiswa yang menunggu di Loket B
+- [x] Review keseluruhan concurrency handling — coba stress test sederhana (buka banyak tab sekaligus, ambil nomor bersamaan)
 
 ## Phase 8 (Nice-to-Have, Setelah MVP Stabil)
 

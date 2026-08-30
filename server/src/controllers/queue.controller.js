@@ -80,6 +80,9 @@ class QueueController {
       });
     } catch (error) {
       console.error('Error calling next ticket:', error);
+      if (error.status) {
+        return res.status(error.status).json({ error: error.message });
+      }
       return res.status(500).json({ error: 'Internal server error' });
     }
   }

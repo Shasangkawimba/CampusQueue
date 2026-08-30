@@ -56,7 +56,20 @@ class QueueService {
     try {
       await client.query('BEGIN');
 
-      // Ambil tiket yang paling lama menunggu (status waiting)
+      // 1. Guard check: Make sure there's no ticket currently being served ('called')
+      const activeCheckResult = await client.query(
+        `SELECT id FROM queue_tickets WHERE loket_id = $1 AND status = 'called'`,
+        [loketId]
+      );
+
+      if (activeCheckResult.rows.length > 0) {
+        await client.query('ROLLBACK');
+        const error = new Error('Please complete or skip the current active ticket before calling the next one.');
+        error.status = 400;
+        throw error;
+      }
+
+      // 2. Ambil tiket yang paling lama menunggu (status waiting)
       const result = await client.query(
         `SELECT * FROM queue_tickets
          WHERE loket_id = $1 AND status = 'waiting'
