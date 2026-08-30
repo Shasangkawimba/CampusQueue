@@ -48,9 +48,9 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 5 — Estimasi Waktu Tunggu
 
-- [ ] Query rata-rata durasi layanan (called_at → completed_at) dari N tiket terakhir per loket
-- [ ] Tampilkan estimasi di `QueueStatus.jsx` (posisi antrian × rata-rata durasi)
-- [ ] **Checkpoint:** estimasi muncul dan masuk akal (tidak 0 atau angka aneh) setelah ada beberapa tiket yang sudah `done`
+- [x] Query rata-rata durasi layanan (called_at → completed_at) dari N tiket terakhir per loket
+- [x] Tampilkan estimasi di `QueueStatus.jsx` (posisi antrian × rata-rata durasi)
+- [x] **Checkpoint:** estimasi muncul dan masuk akal (tidak 0 atau angka aneh) setelah ada beberapa tiket yang sudah `done`
 
 ## Phase 6 — Fitur "Selesai" & "Skip"
 

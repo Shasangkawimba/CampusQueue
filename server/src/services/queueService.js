@@ -111,9 +111,26 @@ class QueueService {
         [loketId]
       );
 
+      // Get average service duration in minutes from the last 10 completed tickets
+      const avgResult = await client.query(
+        `SELECT COALESCE(
+          AVG(EXTRACT(EPOCH FROM (completed_at - called_at)) / 60),
+          10
+        ) as avg_wait_minutes
+        FROM (
+          SELECT called_at, completed_at
+          FROM queue_tickets
+          WHERE loket_id = $1 AND status = 'done' AND completed_at IS NOT NULL AND called_at IS NOT NULL
+          ORDER BY completed_at DESC
+          LIMIT 10
+        ) as recent_tickets`,
+        [loketId]
+      );
+
       return {
         currentlyServing: servingResult.rows.length > 0 ? servingResult.rows[0].number : '-',
-        peopleAhead: parseInt(waitingResult.rows[0].count, 10)
+        peopleAhead: parseInt(waitingResult.rows[0].count, 10),
+        avgWaitMinutes: Math.round(parseFloat(avgResult.rows[0].avg_wait_minutes))
       };
     } finally {
       client.release();

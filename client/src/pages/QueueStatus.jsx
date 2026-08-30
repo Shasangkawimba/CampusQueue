@@ -40,7 +40,8 @@ export default function QueueStatus() {
           setTicketState(prev => ({
             ...prev,
             currentlyServing: data.currentlyServing,
-            peopleAhead: data.peopleAhead
+            peopleAhead: data.peopleAhead,
+            estimatedWaitMinutes: data.peopleAhead * (data.avgWaitMinutes || 10)
           }));
         }
       } catch (err) {
@@ -56,7 +57,8 @@ export default function QueueStatus() {
       setTicketState(prev => ({
         ...prev,
         currentlyServing: socketData.status.currentlyServing,
-        peopleAhead: socketData.status.peopleAhead
+        peopleAhead: socketData.status.peopleAhead,
+        estimatedWaitMinutes: socketData.status.peopleAhead * (socketData.status.avgWaitMinutes || 10)
       }));
     }
   }, [socketData]);
