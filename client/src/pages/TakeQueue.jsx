@@ -118,7 +118,7 @@ export default function TakeQueue() {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6 text-text-light dark:text-text-dark leading-[1.05]">
                 Digital Queueing,<br /> Perfected.
               </h1>
-              <p className="text-base md:text-lg text-text-muted-light dark:text-text-muted-dark max-w-lg mb-10 leading-relaxed">
+              <p className="text-base md:text-lg text-neutral-500 dark:text-white/60 max-w-lg mb-10 leading-relaxed">
                 Get your queue number instantly from your device. Monitor your live position, estimated wait time, and approach the counter exactly when it's your turn.
               </p>
               
@@ -146,7 +146,7 @@ export default function TakeQueue() {
           {/* Brutalist Flat Bento Grid Live Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-0 mb-16 border-t border-l border-text-light/20 dark:border-text-dark/20 shadow-[8px_8px_0px_rgba(11,25,44,0.1)] dark:shadow-[8px_8px_0px_rgba(0,240,255,0.1)]">
             <div className="flex flex-col bg-bg-light dark:bg-bg-dark border-r border-b border-text-light/20 dark:border-text-dark/20 p-6 md:p-8 transition-colors">
-              <span className="text-[10px] md:text-[11px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-[0.2em] mb-6 md:mb-8">
+              <span className="text-[10px] md:text-[11px] font-bold text-neutral-500 dark:text-white/60 uppercase tracking-[0.2em] mb-6 md:mb-8">
                 Students Served
               </span>
               <span className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tighter text-accent dark:text-accent-dark mt-auto truncate">
@@ -155,16 +155,16 @@ export default function TakeQueue() {
             </div>
             
             <div className="flex flex-col bg-bg-light dark:bg-bg-dark border-r border-b border-text-light/20 dark:border-text-dark/20 p-6 md:p-8 transition-colors">
-              <span className="text-[10px] md:text-[11px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-[0.2em] mb-6 md:mb-8">
+              <span className="text-[10px] md:text-[11px] font-bold text-neutral-500 dark:text-white/60 uppercase tracking-[0.2em] mb-6 md:mb-8">
                 Avg Wait Time
               </span>
               <span className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tighter text-text-light dark:text-text-dark mt-auto truncate">
-                8<span className="text-2xl lg:text-4xl text-text-light/40 dark:text-text-dark/40 ml-1 font-light">min</span>
+                8<span className="text-2xl lg:text-4xl text-text-muted-light dark:text-text-dark/40 ml-1 font-light">min</span>
               </span>
             </div>
             
             <div className="flex flex-col bg-bg-light dark:bg-bg-dark border-r border-b border-text-light/20 dark:border-text-dark/20 p-6 md:p-8 transition-colors col-span-2 md:col-span-1 relative overflow-hidden group">
-              <span className="text-[10px] md:text-[11px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-[0.2em] mb-6 md:mb-8 relative z-10">
+              <span className="text-[10px] md:text-[11px] font-bold text-neutral-500 dark:text-white/60 uppercase tracking-[0.2em] mb-6 md:mb-8 relative z-10">
                 Satisfaction
               </span>
               <span className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tighter text-accent dark:text-accent-dark mt-auto truncate relative z-10">
@@ -217,26 +217,26 @@ export default function TakeQueue() {
                         OPEN
                       </div>
                     ) : (
-                      <div className="px-2 py-1 border border-text-light/15 dark:border-slate-700 bg-bg-light dark:bg-text-dark/5/50 rounded uppercase text-[10px] font-bold tracking-wider text-text-light/40 dark:text-text-dark/50">
+                      <div className="px-2 py-1 border border-text-light/15 dark:border-slate-700 bg-bg-light dark:bg-text-dark/5/50 rounded uppercase text-[10px] font-bold tracking-wider text-neutral-500 dark:text-white/60">
                         CLOSED
                       </div>
                     )}
                   </div>
 
-                  <p className="text-[15px] text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-10 flex-1">
+                  <p className="text-[15px] text-neutral-500 dark:text-white/60 leading-relaxed mb-10 flex-1">
                     {service.desc}
                   </p>
 
                   <div className="flex items-end justify-between pt-6 border-t border-slate-100 dark:border-text-dark/15">
                     <div>
-                      <div className="text-[10px] font-bold text-text-light/40 dark:text-text-dark/50 uppercase tracking-[0.15em] mb-1">Now Serving</div>
+                      <div className="text-[10px] font-bold text-neutral-500 dark:text-white/60 uppercase tracking-[0.15em] mb-1">Now Serving</div>
                       <div className="font-mono text-lg font-medium text-text-light dark:text-text-dark">
                         {service.nowServing}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] font-bold text-text-light/40 dark:text-text-dark/50 uppercase tracking-[0.15em] mb-1">Wait Time</div>
-                      <div className="text-[15px] font-medium text-text-muted-light dark:text-text-muted-dark">
+                      <div className="text-[10px] font-bold text-neutral-500 dark:text-white/60 uppercase tracking-[0.15em] mb-1">Wait Time</div>
+                      <div className="text-[15px] font-medium text-neutral-500 dark:text-white/60">
                         {isOpen ? (
                           <>
                             <span className="font-semibold text-text-light dark:text-text-dark">{service.waitingCount}</span> ahead
@@ -258,13 +258,13 @@ export default function TakeQueue() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* System Log */}
           <div className="lg:col-span-8 flex flex-col">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-light/40 dark:text-text-dark/50 mb-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-white/60 mb-5">
               System Log
             </h3>
             
             <div className="bg-bg-light dark:bg-bg-dark border border-text-light/15 dark:border-text-dark/15 rounded-none overflow-hidden shadow-[4px_4px_0px_rgba(11,25,44,0.1)] dark:shadow-[4px_4px_0px_rgba(0,240,255,0.1)]">
               <table className="w-full text-left text-sm">
-                <thead className="bg-bg-light dark:bg-bg-dark text-[11px] text-text-dark/50 dark:text-text-muted-dark font-semibold uppercase tracking-wider border-b border-text-light/15 dark:border-text-dark/15">
+                <thead className="bg-bg-light dark:bg-bg-dark text-[11px] text-neutral-500 dark:text-white/60 font-semibold uppercase tracking-wider border-b border-text-light/15 dark:border-text-dark/15">
                   <tr>
                     <th className="px-6 py-4 w-32">Ticket</th>
                     <th className="px-6 py-4">Destination</th>
@@ -277,10 +277,10 @@ export default function TakeQueue() {
                       <td className="px-6 py-4 font-mono text-[13px] font-medium text-text-light dark:text-text-dark">
                         {call.ticket}
                       </td>
-                      <td className="px-6 py-4 text-[14px] font-medium text-text-muted-light dark:text-text-dark/70">
+                      <td className="px-6 py-4 text-[14px] font-medium text-neutral-500 dark:text-white/60">
                         {call.counter}
                       </td>
-                      <td className="px-6 py-4 text-right text-[13px] text-text-light/40 dark:text-text-dark/50 font-mono">
+                      <td className="px-6 py-4 text-right text-[13px] text-neutral-500 dark:text-white/60 font-mono">
                         {call.time}
                       </td>
                     </tr>
@@ -292,26 +292,26 @@ export default function TakeQueue() {
 
           {/* Minimalist Guidelines */}
           <div className="lg:col-span-4 flex flex-col">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-text-light/40 dark:text-text-dark/50 mb-5">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-white/60 mb-5">
               Rules
             </h3>
             <div className="bg-text-light/5 dark:bg-bg-dark rounded-none p-6 lg:p-8 h-full flex flex-col justify-between border border-transparent dark:border-text-dark/15">
               <ul className="space-y-6">
                 <li className="flex gap-4">
-                  <span className="text-text-light/40 dark:text-text-dark/50 font-mono text-xs mt-0.5">01</span>
-                  <p className="text-[14px] text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                  <span className="text-neutral-500 dark:text-white/60 font-mono text-xs mt-0.5">01</span>
+                  <p className="text-[14px] text-neutral-500 dark:text-white/60 leading-relaxed">
                     Keep your digital ticket open. Leaving the page does not cancel your spot.
                   </p>
                 </li>
                 <li className="flex gap-4">
-                  <span className="text-text-light/40 dark:text-text-dark/50 font-mono text-xs mt-0.5">02</span>
-                  <p className="text-[14px] text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                  <span className="text-neutral-500 dark:text-white/60 font-mono text-xs mt-0.5">02</span>
+                  <p className="text-[14px] text-neutral-500 dark:text-white/60 leading-relaxed">
                     Approach the physical counter only when your ticket flashes as <strong className="font-semibold text-text-light dark:text-text-dark">Now Serving</strong>.
                   </p>
                 </li>
               </ul>
               
-              <div className="mt-8 pt-5 border-t border-text-light/15 dark:border-text-dark/15 flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase text-text-light/40 dark:text-text-dark/50">
+              <div className="mt-8 pt-5 border-t border-text-light/15 dark:border-text-dark/15 flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase text-neutral-500 dark:text-white/60">
                 <span>Rectorate</span>
                 <span>Floor 1</span>
               </div>
