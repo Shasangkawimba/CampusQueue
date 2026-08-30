@@ -6,6 +6,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 // Public route to get current status of a loket queue
 router.get('/loket/:id/status', queueController.getStatus);
 
+// Public route to get a specific ticket's status
+router.get('/loket/:id/ticket-status/:ticketNumber', queueController.getTicketStatus);
+
 // Public route to take a new ticket for a specific loket
 router.post('/loket/:id/take-ticket', queueController.takeTicket);
 

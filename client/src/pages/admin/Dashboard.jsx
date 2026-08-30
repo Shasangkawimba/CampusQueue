@@ -37,7 +37,9 @@ export default function Dashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCounter, setSelectedCounter] = useState(1);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isCounterDropdownOpen, setIsCounterDropdownOpen] = useState(false);
 
+  const [lokets, setLokets] = useState([]);
   const [currentServing, setCurrentServing] = useState(null);
   const [queueList, setQueueList] = useState([]);
   const [stats, setStats] = useState({ avgWaitMins: 0, totalServed: 0 }); // Mock stats for now
@@ -51,6 +53,19 @@ export default function Dashboard() {
       navigate('/admin/login');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchLokets = async () => {
+      try {
+        const response = await api.get('/loket');
+        const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+        setLokets(data);
+      } catch (err) {
+        console.error('Failed to fetch lokets:', err);
+      }
+    };
+    fetchLokets();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -83,6 +98,7 @@ export default function Dashboard() {
   const handleCallNext = async () => {
     try {
       await api.post(`/loket/${selectedCounter}/call-next`);
+      fetchAdminStatus(); // Fetch status immediately
     } catch (error) {
       console.error('Failed to call next ticket', error);
       if (error.response?.status === 404) {
@@ -97,6 +113,7 @@ export default function Dashboard() {
     if (!currentServing) return;
     try {
       await api.post(`/loket/${selectedCounter}/ticket/${currentServing.id}/done`);
+      fetchAdminStatus(); // Fetch status immediately
     } catch (error) {
       console.error('Failed to mark done', error);
     }
@@ -106,6 +123,7 @@ export default function Dashboard() {
     if (!currentServing) return;
     try {
       await api.post(`/loket/${selectedCounter}/ticket/${currentServing.id}/skip`);
+      fetchAdminStatus(); // Fetch status immediately
     } catch (error) {
       console.error('Failed to skip', error);
     }
@@ -163,35 +181,25 @@ export default function Dashboard() {
               Select Counter
             </div>
             <div className="flex flex-col gap-1.5">
-              <button 
-                onClick={() => { setSelectedCounter(1); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all ${
-                  selectedCounter === 1 
-                    ? 'bg-text-light/10 dark:bg-text-dark/10 font-bold border border-text-light/15 dark:border-text-dark/15' 
-                    : 'hover:bg-text-light/5 dark:hover:bg-text-dark/5 font-medium text-text-muted-light dark:text-text-dark/80 border border-transparent'
-                }`}
-              >
-                <div>
-                  <div className="text-sm">Counter 01</div>
-                  <div className="text-xs text-text-muted-light dark:text-text-muted-dark/70 font-normal mt-0.5">Academic Administration</div>
-                </div>
-                {selectedCounter === 1 && <span className="material-symbols-outlined text-[18px]">check</span>}
-              </button>
-
-              <button 
-                onClick={() => { setSelectedCounter(2); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all ${
-                  selectedCounter === 2 
-                    ? 'bg-text-light/10 dark:bg-text-dark/10 font-bold border border-text-light/15 dark:border-text-dark/15' 
-                    : 'hover:bg-text-light/5 dark:hover:bg-text-dark/5 font-medium text-text-muted-light dark:text-text-dark/80 border border-transparent'
-                }`}
-              >
-                <div>
-                  <div className="text-sm">Counter 02</div>
-                  <div className="text-xs text-text-muted-light dark:text-text-muted-dark/70 font-normal mt-0.5">Finance & Tuition</div>
-                </div>
-                {selectedCounter === 2 && <span className="material-symbols-outlined text-[18px]">check</span>}
-              </button>
+              {lokets.length > 0 ? lokets.map((loket) => (
+                <button 
+                  key={loket.id}
+                  onClick={() => { setSelectedCounter(loket.id); setIsMobileMenuOpen(false); }}
+                  className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all ${
+                    selectedCounter === loket.id 
+                      ? 'bg-text-light/10 dark:bg-text-dark/10 font-bold border border-text-light/15 dark:border-text-dark/15' 
+                      : 'hover:bg-text-light/5 dark:hover:bg-text-dark/5 font-medium text-text-muted-light dark:text-text-dark/80 border border-transparent'
+                  }`}
+                >
+                  <div>
+                    <div className="text-sm">Counter {String(loket.id).padStart(2, '0')}</div>
+                    <div className="text-xs text-text-muted-light dark:text-text-muted-dark/70 font-normal mt-0.5">{loket.name}</div>
+                  </div>
+                  {selectedCounter === loket.id && <span className="material-symbols-outlined text-[18px]">check</span>}
+                </button>
+              )) : (
+                <div className="text-sm text-text-muted-light dark:text-text-muted-dark p-3">Loading counters...</div>
+              )}
             </div>
           </div>
 
@@ -286,10 +294,46 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">Overview</h1>
-            <div className="flex items-center gap-2 mt-1.5">
-              <span className="text-sm font-medium text-text-muted-light dark:text-text-muted-dark bg-text-light/5 dark:bg-text-dark/10 px-2.5 py-1 rounded-md border border-text-light/10 dark:border-text-dark/10">
-                Counter 01 • Academic Administration
-              </span>
+            <div className="flex items-center gap-2 mt-1.5 relative">
+              <button 
+                onClick={() => setIsCounterDropdownOpen(!isCounterDropdownOpen)}
+                className="flex items-center gap-1.5 text-sm font-medium text-text-light dark:text-text-dark bg-text-light/5 dark:bg-text-dark/10 hover:bg-text-light/10 dark:hover:bg-text-dark/20 px-3 py-1.5 rounded-md border border-text-light/10 dark:border-text-dark/10 transition-colors"
+              >
+                {lokets.length > 0 
+                  ? `Counter ${String(selectedCounter).padStart(2, '0')} • ${lokets.find(l => l.id === selectedCounter)?.name || 'Unknown'}`
+                  : `Counter ${String(selectedCounter).padStart(2, '0')} • Loading...`}
+                <span className="material-symbols-outlined text-[16px]">
+                  {isCounterDropdownOpen ? 'expand_less' : 'expand_more'}
+                </span>
+              </button>
+
+              {/* Counter Dropdown Menu */}
+              {isCounterDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setIsCounterDropdownOpen(false)} />
+                  <div className="absolute top-full left-0 mt-2 w-64 glass-panel rounded-xl py-1 z-40 shadow-lg border border-text-light/15 dark:border-text-dark/15 overflow-hidden">
+                    {lokets.length > 0 ? lokets.map(loket => (
+                      <button 
+                        key={loket.id}
+                        onClick={() => { setSelectedCounter(loket.id); setIsCounterDropdownOpen(false); }}
+                        className={`w-full px-4 py-2.5 text-left transition-colors flex items-center justify-between ${
+                          selectedCounter === loket.id 
+                            ? 'bg-text-light/5 dark:bg-text-dark/10 font-bold' 
+                            : 'hover:bg-text-light/5 dark:hover:bg-text-dark/5'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-sm text-text-light dark:text-text-dark">Counter {String(loket.id).padStart(2, '0')}</div>
+                          <div className="text-xs text-text-muted-light dark:text-text-muted-dark font-normal">{loket.name}</div>
+                        </div>
+                        {selectedCounter === loket.id && <span className="material-symbols-outlined text-[18px] text-accent dark:text-accent-dark">check</span>}
+                      </button>
+                    )) : (
+                      <div className="px-4 py-2.5 text-sm text-text-muted-light dark:text-text-muted-dark">Loading counters...</div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className="text-sm font-mono text-text-muted-light dark:text-text-muted-dark bg-text-light/5 dark:bg-text-dark/5 px-3 py-1.5 rounded-lg border border-text-light/10 dark:border-text-dark/10 hidden md:block">

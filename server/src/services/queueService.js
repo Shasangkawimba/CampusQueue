@@ -149,6 +149,24 @@ class QueueService {
       client.release();
     }
   }
+
+  /**
+   * Get specific ticket status
+   */
+  async getSpecificTicketStatus(loketId, ticketNumber) {
+    const client = await db.getClient();
+    try {
+      const result = await client.query(
+        `SELECT status FROM queue_tickets WHERE loket_id = $1 AND number = $2 ORDER BY created_at DESC LIMIT 1`,
+        [loketId, ticketNumber]
+      );
+      if (result.rows.length === 0) return null;
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
   /**
    * Update a ticket's status (done or skipped)
    */

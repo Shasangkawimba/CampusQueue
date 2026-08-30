@@ -16,6 +16,23 @@ class QueueController {
     }
   }
 
+  async getTicketStatus(req, res) {
+    try {
+      const { id, ticketNumber } = req.params;
+      if (!id || !ticketNumber) {
+        return res.status(400).json({ error: 'Loket ID and Ticket Number are required' });
+      }
+      const status = await queueService.getSpecificTicketStatus(id, ticketNumber);
+      if (!status) {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+      return res.status(200).json({ data: status });
+    } catch (error) {
+      console.error('Error getting specific ticket status:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
   async takeTicket(req, res) {
     try {
       const { id } = req.params;
