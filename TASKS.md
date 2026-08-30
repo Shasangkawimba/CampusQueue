@@ -39,12 +39,12 @@ Eksekusi berurutan. Fokus pembelajaran utama project ini ada di **Phase 3 (Atomi
 
 ## Phase 4 — Real-Time via Socket.io — SAMA KRITISNYA
 
-- [ ] `socket.js` — setup Socket.io server, gabungkan dengan HTTP server yang sama dengan Express
-- [ ] `socketService.js` — fungsi `broadcastQueueUpdate(io, loketId, data)`
-- [ ] Integrasikan broadcast ke SETIAP endpoint yang mengubah status tiket (take-ticket, call-next, done, skip) — sesuai Hard Rules di AGENTS.md
-- [ ] Frontend: `useQueueSocket.js` custom hook — join room, listen event `queue:update`
-- [ ] Frontend: halaman `QueueStatus.jsx` — tampilkan posisi antrian yang update otomatis
-- [ ] **Checkpoint (WAJIB diuji manual):** buka halaman `QueueStatus.jsx` di 2 tab berbeda (seolah 2 mahasiswa menunggu di loket yang sama), lalu dari dashboard admin klik "Panggil Berikutnya" — pastikan KEDUA tab tersebut update posisi antriannya secara otomatis TANPA di-refresh manual sama sekali.
+- [x] `socket.js` — setup Socket.io server, gabungkan dengan HTTP server yang sama dengan Express
+- [x] `socketService.js` — fungsi `broadcastQueueUpdate(io, loketId, data)`
+- [x] Integrasikan broadcast ke SETIAP endpoint yang mengubah status tiket (take-ticket, call-next, done, skip) — sesuai Hard Rules di AGENTS.md
+- [x] Frontend: `useQueueSocket.js` custom hook — join room, listen event `queue:update`
+- [x] Frontend: halaman `QueueStatus.jsx` — tampilkan posisi antrian yang update otomatis
+- [x] **Checkpoint (WAJIB diuji manual):** buka halaman `QueueStatus.jsx` di 2 tab berbeda (seolah 2 mahasiswa menunggu di loket yang sama), lalu dari dashboard admin klik "Panggil Berikutnya" — pastikan KEDUA tab tersebut update posisi antriannya secara otomatis TANPA di-refresh manual sama sekali.
 
 ## Phase 5 — Estimasi Waktu Tunggu
 

@@ -66,14 +66,13 @@ export default function TakeQueue() {
 
   const handleTakeTicket = async (id) => {
     try {
-      // Send a POST request to take a ticket for the loket ID
       const response = await fetch(`http://localhost:3000/api/loket/${id}/take-ticket`, {
         method: 'POST',
       });
       if (response.ok) {
-        // For Phase 3, we just navigate. 
-        // In reality, we'd want to pass the ticket data to the status page or save in local storage
-        navigate(`/status/${id}`);
+        const data = await response.json();
+        // Pass the created ticket data to the status page
+        navigate(`/status/${id}`, { state: { ticket: data.data } });
       } else {
         const errorData = await response.json();
         alert(`Error taking ticket: ${errorData.error}`);

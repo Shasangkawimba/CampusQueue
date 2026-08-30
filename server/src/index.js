@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth.routes');
 const loketRoutes = require('./routes/loket.routes');
 const queueRoutes = require('./routes/queue.routes');
+const socketService = require('./services/socketService');
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -28,6 +31,9 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something broke!' });
 });
 
-app.listen(port, () => {
+// Initialize socket.io
+socketService.init(server);
+
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

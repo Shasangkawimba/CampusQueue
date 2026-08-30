@@ -1,22 +1,65 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import Logo from '../components/Logo';
+import { useQueueSocket } from '../hooks/useQueueSocket';
 
 export default function QueueStatus() {
   const { loketId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get ticket from navigation state if available, else fallback
+  const myTicket = location.state?.ticket || {
+    number: '---',
+    created_at: new Date().toISOString()
+  };
 
   const [ticketState, setTicketState] = useState({
-    ticketNumber: 'A-042',
-    counterName: loketId === '2' ? 'Keuangan & Pembayaran' : 'Administrasi Akademik',
-    deskLocation: 'Counter 01, Rectorate Floor 1',
-    currentlyServing: 'A-038',
-    peopleAhead: 4,
-    estimatedWaitMinutes: 12,
+    ticketNumber: myTicket.number,
+    counterName: `Loket ${loketId}`,
+    deskLocation: 'Campus Services',
+    currentlyServing: '-',
+    peopleAhead: 0,
+    estimatedWaitMinutes: 0,
     isDelayed: false,
-    timestamp: 'Oct 26, 10:24 AM',
+    timestamp: new Date(myTicket.created_at).toLocaleString('en-US', { 
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' 
+    }),
   });
+
+  const { socketData } = useQueueSocket(loketId);
+
+  // Fetch initial queue status on mount
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/loket/${loketId}/status`);
+        if (response.ok) {
+          const { data } = await response.json();
+          setTicketState(prev => ({
+            ...prev,
+            currentlyServing: data.currentlyServing,
+            peopleAhead: data.peopleAhead
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch initial status', err);
+      }
+    };
+    fetchStatus();
+  }, [loketId]);
+
+  // Update status when socket receives an event
+  useEffect(() => {
+    if (socketData && socketData.status) {
+      setTicketState(prev => ({
+        ...prev,
+        currentlyServing: socketData.status.currentlyServing,
+        peopleAhead: socketData.status.peopleAhead
+      }));
+    }
+  }, [socketData]);
 
   const handleDelay = () => {
     setTicketState((prev) => ({

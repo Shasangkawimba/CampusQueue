@@ -89,6 +89,36 @@ class QueueService {
       client.release();
     }
   }
+
+  /**
+   * Get the current status of the queue for a loket
+   */
+  async getQueueStatus(loketId) {
+    const client = await db.getClient();
+    try {
+      // Get the currently serving ticket (the latest one that was called)
+      const servingResult = await client.query(
+        `SELECT number FROM queue_tickets 
+         WHERE loket_id = $1 AND status = 'called' 
+         ORDER BY called_at DESC LIMIT 1`,
+        [loketId]
+      );
+      
+      // Get count of people waiting
+      const waitingResult = await client.query(
+        `SELECT COUNT(*) as count FROM queue_tickets 
+         WHERE loket_id = $1 AND status = 'waiting'`,
+        [loketId]
+      );
+
+      return {
+        currentlyServing: servingResult.rows.length > 0 ? servingResult.rows[0].number : '-',
+        peopleAhead: parseInt(waitingResult.rows[0].count, 10)
+      };
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = new QueueService();
