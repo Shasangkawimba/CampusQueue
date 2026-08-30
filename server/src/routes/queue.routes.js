@@ -12,4 +12,11 @@ router.post('/loket/:id/take-ticket', queueController.takeTicket);
 // Protected route for admin to call the next ticket for a specific loket
 router.post('/loket/:id/call-next', authMiddleware, queueController.callNext);
 
+// Protected routes for admin to mark ticket as done or skipped
+router.post('/loket/:id/ticket/:ticketId/done', authMiddleware, queueController.markDone);
+router.post('/loket/:id/ticket/:ticketId/skip', authMiddleware, queueController.markSkipped);
+
+// Protected route to get full queue status for admin dashboard
+router.get('/loket/:id/admin-status', authMiddleware, queueController.getAdminStatus);
+
 module.exports = router;

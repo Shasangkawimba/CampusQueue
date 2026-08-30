@@ -136,6 +136,75 @@ class QueueService {
       client.release();
     }
   }
+  /**
+   * Update a ticket's status (done or skipped)
+   */
+  async markTicketStatus(ticketId, loketId, newStatus) {
+    const client = await db.getClient();
+    try {
+      await client.query('BEGIN');
+
+      // Verify the ticket belongs to the loket and is in 'called' status
+      const checkResult = await client.query(
+        `SELECT id FROM queue_tickets WHERE id = $1 AND loket_id = $2 AND status = 'called'`,
+        [ticketId, loketId]
+      );
+
+      if (checkResult.rows.length === 0) {
+        throw new Error('Ticket not found or not currently called');
+      }
+
+      const completedAt = newStatus === 'done' ? 'NOW()' : 'NULL';
+      
+      const updateResult = await client.query(
+        `UPDATE queue_tickets 
+         SET status = $1, completed_at = ${completedAt}
+         WHERE id = $2 RETURNING *`,
+        [newStatus, ticketId]
+      );
+
+      await client.query('COMMIT');
+      return updateResult.rows[0];
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * Get full queue state for Admin Dashboard
+   */
+  async getAdminQueue(loketId) {
+    const client = await db.getClient();
+    try {
+      // Get the currently called ticket
+      const servingResult = await client.query(
+        `SELECT id, number, created_at, called_at 
+         FROM queue_tickets 
+         WHERE loket_id = $1 AND status = 'called' 
+         ORDER BY called_at DESC LIMIT 1`,
+        [loketId]
+      );
+      
+      // Get all waiting tickets
+      const waitingResult = await client.query(
+        `SELECT id, number, created_at 
+         FROM queue_tickets 
+         WHERE loket_id = $1 AND status = 'waiting'
+         ORDER BY created_at ASC`,
+        [loketId]
+      );
+
+      return {
+        currentlyServing: servingResult.rows.length > 0 ? servingResult.rows[0] : null,
+        waitingList: waitingResult.rows
+      };
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = new QueueService();

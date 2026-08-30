@@ -83,6 +83,67 @@ class QueueController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  // [+] NEW: Admin endpoint to mark a ticket as done
+  async markDone(req, res) {
+    try {
+      const { id, ticketId } = req.params;
+      if (!id || !ticketId) {
+        return res.status(400).json({ error: 'Loket ID and Ticket ID are required' });
+      }
+
+      const ticket = await queueService.markTicketStatus(ticketId, id, 'done');
+      const newStatus = await queueService.getQueueStatus(id);
+
+      socketService.broadcastQueueUpdate(id, 'DONE', { ticket, status: newStatus });
+
+      return res.status(200).json({ message: 'Ticket marked as done', data: ticket });
+    } catch (error) {
+      console.error('Error marking ticket done:', error);
+      if (error.message.includes('not found')) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  // [+] NEW: Admin endpoint to mark a ticket as skipped
+  async markSkipped(req, res) {
+    try {
+      const { id, ticketId } = req.params;
+      if (!id || !ticketId) {
+        return res.status(400).json({ error: 'Loket ID and Ticket ID are required' });
+      }
+
+      const ticket = await queueService.markTicketStatus(ticketId, id, 'skipped');
+      const newStatus = await queueService.getQueueStatus(id);
+
+      socketService.broadcastQueueUpdate(id, 'SKIP', { ticket, status: newStatus });
+
+      return res.status(200).json({ message: 'Ticket marked as skipped', data: ticket });
+    } catch (error) {
+      console.error('Error marking ticket skipped:', error);
+      if (error.message.includes('not found')) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  // [+] NEW: Endpoint to get full queue list for Admin Dashboard
+  async getAdminStatus(req, res) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ error: 'Loket ID is required' });
+      }
+      const adminQueue = await queueService.getAdminQueue(id);
+      return res.status(200).json({ data: adminQueue });
+    } catch (error) {
+      console.error('Error getting admin queue status:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }
 
 module.exports = new QueueController();

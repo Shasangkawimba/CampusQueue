@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../components/ThemeToggle';
 import Logo from '../../components/Logo';
 import api from '../../api/axios';
+import { useQueueSocket } from '../../hooks/useQueueSocket';
 
 // A minimal SVG sparkline component for stats cards
 const Sparkline = ({ data, colorClass }) => {
@@ -37,6 +38,13 @@ export default function Dashboard() {
   const [selectedCounter, setSelectedCounter] = useState(1);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const [currentServing, setCurrentServing] = useState(null);
+  const [queueList, setQueueList] = useState([]);
+  const [stats, setStats] = useState({ avgWaitMins: 0, totalServed: 0 }); // Mock stats for now
+
+  // Add socket listener
+  const { socketData } = useQueueSocket(selectedCounter);
+
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
@@ -50,64 +58,31 @@ export default function Dashboard() {
     navigate('/admin/login');
   };
 
-  const [currentServing, setCurrentServing] = useState({
-    ticketNumber: 'A-042',
-    studentName: 'Michael Chang',
-    studentId: '84920',
-    serviceType: 'Tuition Fee Appeal',
-    note: 'Request for review of tuition fee amount due to changes in family income data.',
-    duration: '04:22',
-  });
+  const fetchAdminStatus = async () => {
+    try {
+      const response = await api.get(`/loket/${selectedCounter}/admin-status`);
+      const { currentlyServing, waitingList } = response.data.data;
+      setCurrentServing(currentlyServing);
+      setQueueList(waitingList);
+    } catch (err) {
+      console.error('Failed to fetch admin status:', err);
+    }
+  };
 
-  const [queueList, setQueueList] = useState([
-    {
-      id: 1,
-      ticketNumber: 'A-043',
-      name: 'Sarah Jenkins',
-      studentId: '99281',
-      serviceType: 'Scholarship Counseling',
-      waitTime: '14m',
-    },
-    {
-      id: 2,
-      ticketNumber: 'A-044',
-      name: 'David Okafor',
-      studentId: '44102',
-      serviceType: 'Document Legalization',
-      waitTime: '8m',
-    },
-    {
-      id: 3,
-      ticketNumber: 'A-045',
-      name: 'Elena Rostova',
-      studentId: '11093',
-      serviceType: 'Active Student Certificate',
-      waitTime: '3m',
-    },
-    {
-      id: 4,
-      ticketNumber: 'A-046',
-      name: 'Budi Santoso',
-      studentId: '22104',
-      serviceType: 'New ID Card Collection',
-      waitTime: '1m',
-    },
-  ]);
+  useEffect(() => {
+    fetchAdminStatus();
+  }, [selectedCounter]);
+
+  useEffect(() => {
+    if (socketData) {
+      // Trigger a re-fetch when socket emits an update to ensure strict consistency
+      fetchAdminStatus();
+    }
+  }, [socketData]);
 
   const handleCallNext = async () => {
     try {
-      const response = await api.post(`/loket/${selectedCounter}/call-next`);
-      const { data } = response.data;
-      
-      setCurrentServing({
-        ticketNumber: `A-0${data.number}`,
-        studentName: 'Student (Virtual)',
-        studentId: '---',
-        serviceType: 'Academic Administration',
-        note: 'Virtual student queue via CampusQueue system.',
-        duration: '00:00',
-      });
-      setQueueList((prev) => prev.slice(1));
+      await api.post(`/loket/${selectedCounter}/call-next`);
     } catch (error) {
       console.error('Failed to call next ticket', error);
       if (error.response?.status === 404) {
@@ -116,9 +91,22 @@ export default function Dashboard() {
     }
   };
 
-  const handleComplete = () => {};
-  const handleSkip = () => {
-    handleCallNext();
+  const handleComplete = async () => {
+    if (!currentServing) return;
+    try {
+      await api.post(`/loket/${selectedCounter}/ticket/${currentServing.id}/done`);
+    } catch (error) {
+      console.error('Failed to mark done', error);
+    }
+  };
+
+  const handleSkip = async () => {
+    if (!currentServing) return;
+    try {
+      await api.post(`/loket/${selectedCounter}/ticket/${currentServing.id}/skip`);
+    } catch (error) {
+      console.error('Failed to skip', error);
+    }
   };
 
   return (
@@ -407,100 +395,76 @@ export default function Dashboard() {
               Currently Serving
             </h2>
 
-            {/* The Digital Ticket */}
-            <div className="relative filter drop-shadow-md">
-              {/* Ticket Top Half */}
-              <div className="bg-bg-light dark:bg-bg-dark border border-text-light/15 dark:border-text-dark/15 rounded-t-2xl p-6 md:p-8 flex flex-col gap-6 ticket-cutout-bottom relative z-10">
-                
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest mb-2">
-                      Ticket Number
+            {currentServing ? (
+              <div className="relative filter drop-shadow-md">
+                {/* Ticket Top Half */}
+                <div className="bg-bg-light dark:bg-bg-dark border border-text-light/15 dark:border-text-dark/15 rounded-t-2xl p-6 md:p-8 flex flex-col gap-6 ticket-cutout-bottom relative z-10">
+                  
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest mb-2">
+                        Ticket Number
+                      </div>
+                      <div className="text-6xl md:text-7xl font-black tracking-tighter text-text-light dark:text-text-dark leading-none">
+                        A-{currentServing.number.toString().padStart(3, '0')}
+                      </div>
                     </div>
-                    <div className="text-6xl md:text-7xl font-black tracking-tighter text-text-light dark:text-text-dark leading-none">
-                      {currentServing.ticketNumber}
+                    <div className="text-right">
+                      <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest mb-1">
+                        Called At
+                      </div>
+                      <div className="font-mono text-sm font-bold text-text-light dark:text-text-dark">
+                        {new Date(currentServing.called_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest mb-1">
-                      Duration
-                    </div>
-                    <div className="font-mono text-sm font-bold text-text-light dark:text-text-dark">
-                      {currentServing.duration}
-                    </div>
+
+                  {/* Dashed Tear Line */}
+                  <div className="absolute bottom-0 left-4 right-4 h-[2px] border-b-2 border-dashed border-text-light/10 dark:border-text-dark/10"></div>
+                </div>
+
+                {/* Ticket Bottom Half */}
+                <div className="bg-text-light/5 dark:bg-text-dark/5 border-x border-b border-text-light/15 dark:border-text-dark/15 p-6 flex flex-col gap-5 relative z-0">
+                  <div className="text-center text-text-muted-light dark:text-text-muted-dark text-sm">
+                    In progress
+                  </div>
+                  
+                  {/* Decorative Barcode */}
+                  <div className="mt-2 opacity-30 dark:opacity-40 h-8 flex justify-between items-end gap-[2px] px-2 overflow-hidden">
+                    {[...Array(40)].map((_, i) => (
+                      <div key={i} className="bg-text-light dark:bg-text-dark" style={{ 
+                        width: `${Math.random() > 0.5 ? 2 : 4}px`, 
+                        height: `${Math.random() > 0.3 ? 100 : 70}%` 
+                      }}></div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Dashed Tear Line */}
-                <div className="absolute bottom-0 left-4 right-4 h-[2px] border-b-2 border-dashed border-text-light/10 dark:border-text-dark/10"></div>
-              </div>
-
-              {/* Ticket Bottom Half */}
-              <div className="bg-text-light/5 dark:bg-text-dark/5 border-x border-b border-text-light/15 dark:border-text-dark/15 p-6 flex flex-col gap-5 relative z-0">
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider mb-1">
-                      Student
-                    </div>
-                    <div className="text-sm font-bold text-text-light dark:text-text-dark truncate">
-                      {currentServing.studentName}
-                    </div>
-                    <div className="text-xs font-mono text-text-muted-light dark:text-text-muted-dark mt-0.5">
-                      {currentServing.studentId}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider mb-1">
-                      Service
-                    </div>
-                    <div className="text-xs font-semibold text-text-light dark:text-text-dark leading-tight">
-                      {currentServing.serviceType}
-                    </div>
-                  </div>
+                {/* Action Buttons */}
+                <div className="flex rounded-b-2xl overflow-hidden border-x border-b border-text-light/15 dark:border-text-dark/15 mt-[-1px]">
+                  <button 
+                    onClick={handleSkip} 
+                    className="flex-1 py-4 text-xs font-bold text-text-light dark:text-text-dark hover:bg-text-light/5 dark:hover:bg-text-dark/5 transition-colors border-r border-text-light/10 dark:border-text-dark/10 bg-bg-light dark:bg-bg-dark uppercase tracking-widest"
+                  >
+                    Skip
+                  </button>
+                  <button 
+                    onClick={handleComplete} 
+                    className="flex-1 py-4 text-xs font-bold bg-accent dark:bg-accent-dark text-white dark:text-bg-dark hover:opacity-90 transition-colors uppercase tracking-widest"
+                  >
+                    Complete
+                  </button>
                 </div>
-
-                {currentServing.note && (
-                  <div>
-                    <div className="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider mb-1">
-                      Note
-                    </div>
-                    <div className="text-xs text-text-light dark:text-text-dark/80 bg-bg-light/50 dark:bg-bg-dark/50 p-3 rounded-lg border border-text-light/5 dark:border-text-dark/5 italic leading-relaxed">
-                      "{currentServing.note}"
-                    </div>
-                  </div>
-                )}
-
-                {/* Decorative Barcode */}
-                <div className="mt-2 opacity-30 dark:opacity-40 h-8 flex justify-between items-end gap-[2px] px-2 overflow-hidden">
-                  {[...Array(40)].map((_, i) => (
-                    <div key={i} className="bg-text-light dark:bg-text-dark" style={{ 
-                      width: `${Math.random() > 0.5 ? 2 : 4}px`, 
-                      height: `${Math.random() > 0.3 ? 100 : 70}%` 
-                    }}></div>
-                  ))}
+              </div>
+            ) : (
+              <div className="glass-panel border border-text-light/15 dark:border-text-dark/15 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 min-h-[300px]">
+                <span className="material-symbols-outlined text-4xl text-text-muted-light/50 dark:text-text-muted-dark/50">inbox</span>
+                <div>
+                  <h3 className="font-bold text-text-light dark:text-text-dark">No Active Ticket</h3>
+                  <p className="text-sm text-text-muted-light dark:text-text-muted-dark mt-1">Call the next student to begin.</p>
                 </div>
-
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex rounded-b-2xl overflow-hidden border-x border-b border-text-light/15 dark:border-text-dark/15 mt-[-1px]">
-                <button 
-                  onClick={handleSkip} 
-                  className="flex-1 py-4 text-xs font-bold text-text-light dark:text-text-dark hover:bg-text-light/5 dark:hover:bg-text-dark/5 transition-colors border-r border-text-light/10 dark:border-text-dark/10 bg-bg-light dark:bg-bg-dark uppercase tracking-widest"
-                >
-                  Skip
-                </button>
-                <button 
-                  onClick={handleComplete} 
-                  className="flex-1 py-4 text-xs font-bold bg-accent dark:bg-accent-dark text-white dark:text-bg-dark hover:opacity-90 transition-colors uppercase tracking-widest"
-                >
-                  Complete
-                </button>
-              </div>
-
-            </div>
+            )}
           </div>
 
           {/* Incoming Queue Table - Minimalist */}
@@ -524,7 +488,7 @@ export default function Dashboard() {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-text-muted-light dark:text-text-muted-dark">search</span>
                   <input
                     type="text"
-                    placeholder="Search tickets or students..."
+                    placeholder="Search ticket numbers..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg bg-text-light/5 dark:bg-text-dark/10 border-transparent focus:border-text-light/20 dark:focus:border-text-dark/20 focus:outline-none transition-colors"
@@ -536,36 +500,31 @@ export default function Dashboard() {
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="border-b border-text-light/5 dark:border-text-dark/5 text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted-dark">
-                      <th className="px-5 py-4 font-bold w-24">No</th>
-                      <th className="px-5 py-4 font-bold">Student</th>
-                      <th className="px-5 py-4 font-bold hidden sm:table-cell">Service</th>
+                      <th className="px-5 py-4 font-bold w-32">Ticket No</th>
+                      <th className="px-5 py-4 font-bold">Time Joined</th>
                       <th className="px-5 py-4 font-bold text-right w-24">Wait</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-text-light/5 dark:divide-text-dark/5">
                     {queueList.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-5 py-12 text-center text-text-muted-light dark:text-text-muted-dark">
+                        <td colSpan={3} className="px-5 py-12 text-center text-text-muted-light dark:text-text-muted-dark">
                           No tickets in queue
                         </td>
                       </tr>
                     ) : (
                       queueList
-                        .filter((q) => q.name.toLowerCase().includes(searchQuery.toLowerCase()) || q.studentId.includes(searchQuery) || q.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase()))
+                        .filter((q) => `A-${q.number.toString().padStart(3, '0')}`.toLowerCase().includes(searchQuery.toLowerCase()))
                         .map((item) => (
                           <tr key={item.id} className="hover:bg-text-light/5 dark:hover:bg-text-dark/5 transition-colors">
                             <td className="px-5 py-4 font-bold font-mono text-text-light dark:text-text-dark">
-                              {item.ticketNumber}
+                              A-{item.number.toString().padStart(3, '0')}
                             </td>
-                            <td className="px-5 py-4">
-                              <div className="font-bold text-text-light dark:text-text-dark truncate text-sm">{item.name}</div>
-                              <div className="text-xs font-mono text-text-muted-light dark:text-text-muted-dark mt-0.5">{item.studentId}</div>
-                            </td>
-                            <td className="px-5 py-4 text-xs font-semibold text-text-muted-light dark:text-text-dark/80 hidden sm:table-cell truncate max-w-[180px]">
-                              {item.serviceType}
+                            <td className="px-5 py-4 text-sm font-semibold text-text-muted-light dark:text-text-dark/80">
+                              {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </td>
                             <td className="px-5 py-4 text-right font-mono font-bold text-xs text-text-muted-light dark:text-text-muted-dark">
-                              {item.waitTime}
+                              {Math.floor((new Date() - new Date(item.created_at)) / 60000)}m
                             </td>
                           </tr>
                         ))
